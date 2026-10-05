@@ -1,1 +1,33 @@
-{}
+{
+  "name": "react-example",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "vite preview",
+    "preview": "vite preview",
+    "clean": "rm -rf dist server.js",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/canvas-confetti": "^1.9.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "canvas-confetti": "^1.9.4",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^6.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.3"
+  }
+}
