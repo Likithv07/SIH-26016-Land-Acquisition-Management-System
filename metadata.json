@@ -1,0 +1,6 @@
+{
+  "name": "BhoomiSetu",
+  "description": "National Land Acquisition & Management System – One Digital Platform for Transparent and Efficient Land Acquisition",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

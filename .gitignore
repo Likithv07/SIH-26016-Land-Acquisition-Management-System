@@ -1,0 +1,13 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+powershell.cmd
+backend/powershell.cmd
+backend/storage/uploads/
+backend/venv/
+backend/.pytest_cache/

@@ -1,0 +1,272 @@
+import React from 'react';
+import { useApp } from '../../context/AppContext';
+import { StatusBadge } from '../common/StatusBadge';
+import {
+  ArrowLeft,
+  Building,
+  Calendar,
+  MapPin,
+  Compass,
+  Calculator,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  UserCheck,
+} from 'lucide-react';
+
+export const ProjectDetails: React.FC = () => {
+  const {
+    selectedProjectId,
+    projects,
+    setCurrentView,
+    userRole,
+    setUserRole,
+    showToast,
+  } = useApp();
+
+  const project =
+    projects.find((p) => p.id === selectedProjectId) || projects[0];
+
+  const getStatusBorder = (status: string) => {
+    switch (status) {
+      case 'Completed':
+        return 'border-emerald-200 bg-emerald-50/50 text-slate-800';
+      case 'In Progress':
+        return 'border-blue-300 bg-blue-50/60 text-slate-900 ring-1 ring-blue-200';
+      case 'Delayed':
+        return 'border-rose-200 bg-rose-50/50 text-slate-800';
+      default:
+        return 'border-slate-200 bg-slate-50 text-slate-700';
+    }
+  };
+
+  return (
+    <div className="space-y-6 pb-16">
+      {/* Back button & Actions */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => setCurrentView('projects')}
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-blue-700 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to Projects Master</span>
+        </button>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setCurrentView('gis_map');
+              showToast(`Navigated to GIS view for ${project.id}`, 'info');
+            }}
+            className="px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+          >
+            <Compass className="w-4 h-4" />
+            <span>Open in GIS Map</span>
+          </button>
+          <button
+            onClick={() => {
+              setUserRole('officer');
+              setCurrentView('compensation');
+              showToast('Opened Compensation & Award Hearing Console', 'info');
+            }}
+            className="px-3.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+          >
+            <Calculator className="w-4 h-4" />
+            <span>Review Awards</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Project Overview Card */}
+      <div className="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-6 mb-6">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="font-mono text-xs font-bold text-blue-950 bg-blue-50 px-2.5 py-1 rounded border border-blue-200">
+                {project.id}
+              </span>
+              <StatusBadge status={project.status} />
+              <span className="px-2.5 py-1 rounded bg-slate-100 text-xs font-medium text-slate-700 border border-slate-200">
+                {project.projectType}
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+              {project.name}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 mt-1">{project.ministry}</p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
+            <div className="text-left sm:text-right">
+              <span className="text-xs text-slate-500 block font-medium">Overall Milestone Progress</span>
+              <span className="font-mono text-2xl font-bold text-blue-900">{project.progress}%</span>
+              <div className="w-36 h-2 bg-slate-100 rounded-full mt-1 overflow-hidden border border-slate-200">
+                <div
+                  className="h-full bg-blue-700 rounded-full"
+                  style={{ width: `${project.progress}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Detailed Metadata Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <span className="text-slate-500 block mb-1">Implementing Agency</span>
+            <span className="text-slate-900 font-semibold flex items-center gap-1.5">
+              <Building className="w-3.5 h-3.5 text-blue-700" />
+              {project.implementingAgency}
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <span className="text-slate-500 block mb-1">State & District</span>
+            <span className="text-slate-900 font-semibold flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-emerald-700" />
+              {project.state}, {project.district}
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <span className="text-slate-500 block mb-1">Project Start Date</span>
+            <span className="text-slate-900 font-semibold flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-blue-700" />
+              {project.startDate}
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <span className="text-slate-500 block mb-1">Expected Completion</span>
+            <span className="text-slate-900 font-semibold flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-purple-700" />
+              {project.expectedCompletionDate}
+            </span>
+          </div>
+        </div>
+
+        {/* Land & Financial Counters */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs mt-4">
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <span className="text-slate-500 block">Land Required</span>
+            <span className="text-lg font-bold font-mono text-slate-900">{(project?.landRequired ?? 0).toLocaleString()} Acres</span>
+          </div>
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+            <span className="text-emerald-900 font-medium block">Land Acquired</span>
+            <span className="text-lg font-bold font-mono text-emerald-700">{(project?.landAcquired ?? 0).toLocaleString()} Acres</span>
+          </div>
+          <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200">
+            <span className="text-blue-900 font-medium block">Total Parcels</span>
+            <span className="text-lg font-bold font-mono text-blue-900">{project?.totalParcels ?? 0} Plots</span>
+          </div>
+          <div className="p-3.5 rounded-xl bg-purple-50 border border-purple-200">
+            <span className="text-purple-900 font-medium block">Disbursed Award</span>
+            <span className="text-lg font-bold font-mono text-purple-700">₹{(project?.compensationDisbursedCr ?? 0).toLocaleString()} Cr</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Vertical Lifecycle Timeline (10 Acquisition Stages) */}
+      <div className="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div className="flex items-center justify-between mb-8 border-b border-slate-100 pb-4">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-blue-700" />
+              <span>Statutory 10-Stage Land Acquisition Timeline</span>
+            </h2>
+            <p className="text-xs text-slate-600 mt-0.5">
+              Compliant with RFCTLARR Act 2013 and Section 3A to 3D gazette processes
+            </p>
+          </div>
+          <span className="text-xs font-mono font-bold text-blue-900 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+            Current: Stage {project.stages.find((s) => s.status === 'In Progress')?.stageNumber || 7}
+          </span>
+        </div>
+
+        <div className="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-3 sm:before:left-4 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-200">
+          {project.stages.map((stage) => {
+            const isCompleted = stage.status === 'Completed';
+            const isInProgress = stage.status === 'In Progress';
+            const isDelayed = stage.status === 'Delayed';
+
+            return (
+              <div key={stage.stageNumber} className="relative group">
+                {/* Node icon */}
+                <div
+                  className={`absolute -left-6 sm:-left-8 top-1 w-6 h-6 sm:w-8 sm:h-8 rounded-full border flex items-center justify-center bg-white z-10 transition-all ${
+                    isCompleted
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-700'
+                      : isInProgress
+                      ? 'border-blue-600 bg-blue-50 text-blue-800 ring-2 ring-blue-200'
+                      : isDelayed
+                      ? 'border-rose-500 bg-rose-50 text-rose-700'
+                      : 'border-slate-300 text-slate-400'
+                  }`}
+                >
+                  <span className="text-[11px] font-mono font-bold">
+                    {stage.stageNumber}
+                  </span>
+                </div>
+
+                {/* Stage Content Card */}
+                <div
+                  className={`p-4 sm:p-5 rounded-2xl border transition-all ${getStatusBorder(
+                    stage.status
+                  )}`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2.5">
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">
+                        {stage.name}
+                      </h3>
+                      <StatusBadge status={stage.status} />
+                    </div>
+
+                    <div className="flex items-center gap-3 text-xs font-mono text-slate-500">
+                      <span>{stage.date}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                    {stage.notes}
+                  </p>
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/80 text-xs">
+                    <div className="flex items-center gap-1.5 text-slate-500">
+                      <UserCheck className="w-3.5 h-3.5 text-blue-700" />
+                      <span>Authorized Officer: </span>
+                      <span className="text-slate-900 font-semibold">{stage.officerName}</span>
+                    </div>
+
+                    {/* Quick Action Button for In-Progress Stages */}
+                    {isInProgress && stage.stageNumber === 7 && (
+                      <button
+                        onClick={() => {
+                          setUserRole('officer');
+                          setCurrentView('compensation');
+                        }}
+                        className="px-3 py-1 rounded-lg bg-blue-700 text-white text-xs font-bold shadow-2xs hover:bg-blue-800 transition-colors"
+                      >
+                        Action Award Approval →
+                      </button>
+                    )}
+                    {isInProgress && stage.stageNumber === 3 && userRole === 'field_officer' && (
+                      <button
+                        onClick={() => {
+                          setCurrentView('field_upload');
+                        }}
+                        className="px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold shadow-2xs hover:bg-emerald-700 transition-colors"
+                      >
+                        Upload Field Verification →
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
