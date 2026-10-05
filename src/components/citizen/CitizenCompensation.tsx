@@ -2,21 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { StatusBadge } from '../common/StatusBadge';
 import {
-  FileText,
   Download,
-  Printer,
   CheckCircle2,
-  Clock,
   ArrowUpRight,
-  ShieldCheck,
-  Building2,
   Fingerprint,
-  TrendingUp,
   AlertCircle,
   HelpCircle,
-  Calendar,
-  CreditCard,
-  ChevronRight,
   Landmark,
   Scale,
   RefreshCw,
@@ -121,7 +112,7 @@ export const CitizenCompensation: React.FC = () => {
       parcelId: parcel.id,
       citizenName: parcel.landownerName,
       mobile: parcel.landownerMobile || '9876543210',
-      category: 'Compensation Dispute',
+      category: 'Compensation Issue',
       subject: `Section 64 Objection: Sy ${parcel.surveyNumber}`,
       description: disputeReason,
     });
@@ -491,7 +482,7 @@ CALA Seal             : DIGITAL-SEAL-VERIFIED-${parcel.id}
               AI Land Assistant or file an objection under Section 64 with the District Collector.
             </p>
             <button
-              onClick={() => setCurrentView('citizen_support')}
+              onClick={() => setCurrentView('grievance')}
               className="text-blue-800 font-semibold hover:underline inline-flex items-center gap-1"
             >
               Open Citizen Grievance Portal <ArrowUpRight className="w-3.5 h-3.5" />

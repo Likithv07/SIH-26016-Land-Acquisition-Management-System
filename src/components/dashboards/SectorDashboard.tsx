@@ -57,6 +57,16 @@ export const SectorDashboard: React.FC = () => {
 
   const sector = SECTORS_CONFIG[activeSector] || SECTORS_CONFIG.highways;
 
+  const corridorQuery = filterQuery.trim().toLowerCase();
+  const corridorProjects = projects.filter(
+    (p) =>
+      !corridorQuery ||
+      p.name.toLowerCase().includes(corridorQuery) ||
+      p.state.toLowerCase().includes(corridorQuery) ||
+      p.district.toLowerCase().includes(corridorQuery) ||
+      p.id.toLowerCase().includes(corridorQuery)
+  );
+
   const handleSwitchSector = (s: SectorType) => {
     setActiveSector(s);
     const roleMapping: Record<SectorType, any> = {
@@ -192,15 +202,17 @@ export const SectorDashboard: React.FC = () => {
           >
             <div className="flex items-center justify-between gap-2 mb-2">
               <span className="text-xs font-semibold text-slate-500">{metric.label}</span>
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">
-                {metric.change}
-              </span>
+              {metric.trend && (
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">
+                  {metric.trend}
+                </span>
+              )}
             </div>
             <div>
               <span className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight block">
                 {metric.value}
               </span>
-              <p className="text-[11px] text-slate-500 mt-1 leading-normal">{metric.context}</p>
+              <p className="text-[11px] text-slate-500 mt-1 leading-normal">{metric.subtext}</p>
             </div>
           </div>
         ))}
@@ -435,9 +447,9 @@ export const SectorDashboard: React.FC = () => {
                         </span>
                         <span
                           className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase shrink-0 ${
-                            item.urgency === 'urgent'
+                            item.urgency === 'critical'
                               ? 'bg-rose-100 text-rose-800'
-                              : item.urgency === 'moderate'
+                              : item.urgency === 'high'
                               ? 'bg-amber-100 text-amber-800'
                               : 'bg-blue-100 text-blue-800'
                           }`}
@@ -446,11 +458,11 @@ export const SectorDashboard: React.FC = () => {
                         </span>
                       </div>
                       <p className="text-[11px] text-slate-600 line-clamp-2">
-                        {item.description}
+                        {item.detail}
                       </p>
                       <div className="pt-1 flex items-center justify-between">
                         <span className="text-[10px] text-slate-500 font-medium">
-                          Target: {item.target}
+                          Category: {item.category}
                         </span>
                         <button
                           onClick={() => handleActionExecute(item.title)}
@@ -518,32 +530,46 @@ export const SectorDashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
-                {projects.slice(0, 5).map((p) => (
+                {corridorProjects.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-slate-500">
+                      No corridors match "{filterQuery}".
+                    </td>
+                  </tr>
+                )}
+                {corridorProjects.map((p) => {
+                  const currentStage =
+                    p.lifecycle.find((s) => s.status === 'In Progress' || s.status === 'Delayed') ||
+                    p.lifecycle[p.lifecycle.length - 1];
+                  const clearance = p.landRequired
+                    ? Math.min(100, Math.round((p.landAcquired / p.landRequired) * 100))
+                    : 0;
+                  return (
                   <tr key={p.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="px-4 py-3">
                       <span className="font-bold text-slate-900 block">{p.name}</span>
                       <span className="text-[11px] text-slate-500 font-mono">{p.id}</span>
                     </td>
                     <td className="px-4 py-3 text-slate-700">
-                      {p.state} • {p.districts.join(', ')}
+                      {p.state} • {p.district}
                     </td>
                     <td className="px-4 py-3 text-slate-900 font-semibold">
-                      {p.totalAreaHectares} Ha
+                      {p.landRequired.toLocaleString('en-IN')} Ac
                     </td>
                     <td className="px-4 py-3">
                       <span className="px-2.5 py-1 rounded-md bg-blue-50 text-blue-900 border border-blue-200 text-[11px] font-bold">
-                        {p.currentStage.toUpperCase()}
+                        {(currentStage?.name || p.status).toUpperCase()}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="w-28 bg-slate-200 rounded-full h-2 overflow-hidden mb-1">
                         <div
                           className="bg-blue-700 h-2 rounded-full"
-                          style={{ width: `${Math.min(100, Math.round((p.acquiredHectares / p.totalAreaHectares) * 100))}%` }}
+                          style={{ width: `${clearance}%` }}
                         />
                       </div>
                       <span className="text-[10px] text-slate-500 font-mono">
-                        {Math.min(100, Math.round((p.acquiredHectares / p.totalAreaHectares) * 100))}% Complete
+                        {clearance}% Complete
                       </span>
                     </td>
                     <td className="px-4 py-3">
@@ -558,7 +584,8 @@ export const SectorDashboard: React.FC = () => {
                       </button>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -630,10 +657,10 @@ export const SectorDashboard: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-slate-900">{item.title}</span>
                     <span className="text-[10px] px-2 py-0.5 rounded font-bold uppercase bg-blue-100 text-blue-900 border border-blue-200">
-                      {item.target}
+                      {item.category}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600">{item.description}</p>
+                  <p className="text-xs text-slate-600">{item.detail}</p>
                 </div>
                 <button
                   onClick={() => handleActionExecute(item.title)}

@@ -351,7 +351,7 @@ SUBMISSION TIMESTAMP    : ${subDate}
 PARCEL IDENTIFIER       : ${citizenParcel.id}
 SURVEY NUMBER           : ${citizenParcel.surveyNumber}
 BENEFICIARY / LANDOWNER : ${citizenParcel.landownerName}
-AADHAAR (MASKED)        : ${citizenParcel.landownerAadhaar || citizenParcel.maskedAadhaar}
+AADHAAR (MASKED)        : ${citizenParcel.maskedAadhaar}
 REGISTERED MOBILE       : ${citizenParcel.landownerMobile}
 VILLAGE / MANDAL        : ${citizenParcel.village}, Mandal: Ghatkesar, Dist: ${citizenParcel.district}
 INFRASTRUCTURE PROJECT  : ${citizenParcel.projectName} (${citizenParcel.projectId})

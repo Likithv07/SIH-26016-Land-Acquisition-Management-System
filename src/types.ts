@@ -168,7 +168,15 @@ export interface FieldDocument {
   id: string;
   parcelId: string;
   title: string;
-  category: 'Land Survey Report' | 'Ownership Document' | 'Consent Form' | 'Field Inspection Report' | 'Other';
+  category:
+    | 'Land Survey Report'
+    | 'Ownership Document'
+    | 'Consent Form'
+    | 'Field Inspection Report'
+    | 'Title Deed'
+    | 'Valuation Report'
+    | 'Gazette Notification'
+    | 'Other';
   uploadedBy: string;
   uploadDate: string;
   fileSize: string;

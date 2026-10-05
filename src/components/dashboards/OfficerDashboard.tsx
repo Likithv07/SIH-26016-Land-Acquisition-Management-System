@@ -124,6 +124,17 @@ export const OfficerDashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
+              {pendingCompensation.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="py-8 text-center">
+                    <CheckCircle2 className="w-6 h-6 text-emerald-600 mx-auto mb-2" />
+                    <span className="block text-sm font-bold text-slate-900">All awards determined</span>
+                    <span className="block text-xs text-slate-500 mt-0.5">
+                      No surveyed parcels are awaiting valuation hearing. Approved awards are queued for PFMS DBT.
+                    </span>
+                  </td>
+                </tr>
+              )}
               {pendingCompensation.map((parcel) => (
                 <tr
                   key={parcel.id}

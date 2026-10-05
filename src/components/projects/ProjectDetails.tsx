@@ -12,12 +12,30 @@ import {
   Clock,
   AlertTriangle,
   UserCheck,
+  ArrowRight,
+  FolderKanban,
 } from 'lucide-react';
+
+// Statutory authority responsible for each lifecycle stage (used when a stage has no named officer)
+const STAGE_AUTHORITY: Record<number, string> = {
+  1: 'Project Proponent (Implementing Agency)',
+  2: 'Tahsildar & Revenue Inspector',
+  3: 'District Survey & Land Records (DSLR)',
+  4: 'Competent Authority for Land Acquisition (CALA)',
+  5: 'Special Land Acquisition Officer',
+  6: 'District Valuation Committee',
+  7: 'District Collector & LAO',
+  8: 'PFMS Treasury & DBT Cell',
+  9: 'Revenue Divisional Officer (RDO)',
+  10: 'Implementing Agency & State Gazette',
+};
 
 export const ProjectDetails: React.FC = () => {
   const {
     selectedProjectId,
     projects,
+    landParcels,
+    setSelectedParcelId,
     setCurrentView,
     userRole,
     setUserRole,
@@ -26,6 +44,23 @@ export const ProjectDetails: React.FC = () => {
 
   const project =
     projects.find((p) => p.id === selectedProjectId) || projects[0];
+
+  const stages = project.lifecycle.map((s) => ({
+    stageNumber: s.id,
+    name: s.name,
+    status: s.status,
+    notes: s.description,
+    date: s.completedDate
+      ? `Completed ${s.completedDate}`
+      : s.targetDate
+      ? `Target ${s.targetDate}`
+      : '',
+    officerName: s.officerInCharge || STAGE_AUTHORITY[s.id] || 'District Revenue Authority',
+    delayDays: s.delayDays,
+  }));
+
+  const projectParcels = landParcels.filter((p) => p.projectId === project.id);
+  const landPendingAcres = Math.max(0, project.landRequired - project.landAcquired);
 
   const getStatusBorder = (status: string) => {
     switch (status) {
@@ -156,8 +191,8 @@ export const ProjectDetails: React.FC = () => {
             <span className="text-lg font-bold font-mono text-emerald-700">{(project?.landAcquired ?? 0).toLocaleString()} Acres</span>
           </div>
           <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200">
-            <span className="text-blue-900 font-medium block">Total Parcels</span>
-            <span className="text-lg font-bold font-mono text-blue-900">{project?.totalParcels ?? 0} Plots</span>
+            <span className="text-blue-900 font-medium block">Sanctioned Budget</span>
+            <span className="text-lg font-bold font-mono text-blue-900">₹{(project?.budgetCr ?? 0).toLocaleString('en-IN')} Cr</span>
           </div>
           <div className="p-3.5 rounded-xl bg-purple-50 border border-purple-200">
             <span className="text-purple-900 font-medium block">Disbursed Award</span>
@@ -179,12 +214,12 @@ export const ProjectDetails: React.FC = () => {
             </p>
           </div>
           <span className="text-xs font-mono font-bold text-blue-900 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-            Current: Stage {project.stages.find((s) => s.status === 'In Progress')?.stageNumber || 7}
+            Current: Stage {stages.find((s) => s.status === 'In Progress' || s.status === 'Delayed')?.stageNumber ?? stages.filter((s) => s.status === 'Completed').length}
           </span>
         </div>
 
         <div className="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-3 sm:before:left-4 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-200">
-          {project.stages.map((stage) => {
+          {stages.map((stage) => {
             const isCompleted = stage.status === 'Completed';
             const isInProgress = stage.status === 'In Progress';
             const isDelayed = stage.status === 'Delayed';
@@ -224,6 +259,9 @@ export const ProjectDetails: React.FC = () => {
 
                     <div className="flex items-center gap-3 text-xs font-mono text-slate-500">
                       <span>{stage.date}</span>
+                      {stage.delayDays ? (
+                        <span className="text-rose-700 font-semibold">+{stage.delayDays}d over SLA</span>
+                      ) : null}
                     </div>
                   </div>
 
@@ -266,6 +304,99 @@ export const ProjectDetails: React.FC = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* Parcel Register for this Project */}
+      <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3 mb-4">
+          <div>
+            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-blue-700" />
+              <span>Land Parcel Register</span>
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Survey-number level acquisition, award and possession status for {project.id}
+            </p>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-mono font-bold">
+            <span className="text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
+              {(project.landAcquired ?? 0).toLocaleString('en-IN')} Ac Acquired
+            </span>
+            <span className="text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">
+              {landPendingAcres.toLocaleString('en-IN')} Ac Pending
+            </span>
+          </div>
+        </div>
+
+        {projectParcels.length === 0 ? (
+          <div className="py-10 text-center space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 mx-auto flex items-center justify-center">
+              <FolderKanban className="w-6 h-6 text-slate-400" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Parcel records held in State Bhu-Naksha registry</p>
+              <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto leading-relaxed">
+                Survey-level records for {project.state} are synchronised nightly from the State land records
+                portal. Open the GIS map to inspect the notified alignment and cadastral boundaries.
+              </p>
+            </div>
+            <button
+              onClick={() => setCurrentView('gis_map')}
+              className="px-4 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-2xs"
+            >
+              <Compass className="w-4 h-4" />
+              <span>View Alignment on GIS Map</span>
+            </button>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-slate-700">
+              <thead className="bg-slate-50 text-slate-700 font-semibold text-[11px] uppercase border-y border-slate-200">
+                <tr>
+                  <th className="py-3 px-4">Parcel ID</th>
+                  <th className="py-3 px-4">Landowner</th>
+                  <th className="py-3 px-4">Survey No. / Village</th>
+                  <th className="py-3 px-4">Extent</th>
+                  <th className="py-3 px-4">Acquisition</th>
+                  <th className="py-3 px-4">Award</th>
+                  <th className="py-3 px-4">Possession</th>
+                  <th className="py-3 px-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium">
+                {projectParcels.map((parcel) => (
+                  <tr key={parcel.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="py-3.5 px-4 font-mono font-bold text-blue-900 whitespace-nowrap">{parcel.id}</td>
+                    <td className="py-3.5 px-4 font-semibold text-slate-900 whitespace-nowrap">{parcel.landownerName}</td>
+                    <td className="py-3.5 px-4 text-slate-600 whitespace-nowrap">
+                      <span className="font-mono">Sy {parcel.surveyNumber}</span> • {parcel.village}
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-800 font-semibold whitespace-nowrap">{parcel.areaAcres} Acres</td>
+                    <td className="py-3.5 px-4">
+                      <StatusBadge status={parcel.acquisitionStatus} size="sm" />
+                    </td>
+                    <td className="py-3.5 px-4 font-bold text-emerald-700 whitespace-nowrap">
+                      ₹{(parcel.compensation?.totalCompensation || parcel.totalCompensation || 0).toLocaleString('en-IN')}
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-600 whitespace-nowrap">{parcel.possessionStatus}</td>
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <button
+                        onClick={() => {
+                          setSelectedParcelId(parcel.id);
+                          setCurrentView('compensation');
+                        }}
+                        className="px-3 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 text-xs font-semibold inline-flex items-center gap-1 transition-colors"
+                      >
+                        <span>Award</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

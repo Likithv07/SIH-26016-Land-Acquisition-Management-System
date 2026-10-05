@@ -757,7 +757,7 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     timestamp: '2 hours ago',
     category: 'field',
     read: false,
-    linkView: 'field',
+    linkView: 'gis_map',
   },
   {
     id: 'NOTIF-3',

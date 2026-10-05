@@ -27,8 +27,8 @@ export const TimelineMonitoring: React.FC = () => {
       slaPercent: 66,
     },
     {
-      id: 'NLA-MH-2026-002',
-      name: 'Western Dedicated Freight Corridor (Section IV)',
+      id: 'NLA-MH-2026-004',
+      name: 'Delhi–Mumbai Industrial Corridor (Shendra-Bidkin Node)',
       notifDate: '01 Apr 2025',
       deadlineDate: '31 Mar 2026',
       daysRemaining: 198,
@@ -38,8 +38,8 @@ export const TimelineMonitoring: React.FC = () => {
       slaPercent: 91,
     },
     {
-      id: 'NLA-KA-2026-004',
-      name: 'Bengaluru Peripheral Ring Road (Phase 2)',
+      id: 'NLA-KA-2026-008',
+      name: 'Bengaluru–Chennai Expressway (Karnataka Section)',
       notifDate: '10 Feb 2025',
       deadlineDate: '09 Feb 2026',
       daysRemaining: 38,
@@ -49,8 +49,8 @@ export const TimelineMonitoring: React.FC = () => {
       slaPercent: 44,
     },
     {
-      id: 'NLA-UP-2026-003',
-      name: 'Ganga Expressway Phase II (Prayagraj-Varanasi)',
+      id: 'NLA-UP-2026-012',
+      name: 'Varanasi–Ranchi–Kolkata Green Expressway (Package 2)',
       notifDate: '20 May 2025',
       deadlineDate: '19 May 2026',
       daysRemaining: 245,
@@ -60,8 +60,8 @@ export const TimelineMonitoring: React.FC = () => {
       slaPercent: 55,
     },
     {
-      id: 'NLA-GJ-2026-005',
-      name: 'Dholera Special Investment Region Rail Link',
+      id: 'NLA-GJ-2026-003',
+      name: 'Dholera Smart Industrial City & Special Investment Region',
       notifDate: '12 Mar 2025',
       deadlineDate: '11 Mar 2026',
       daysRemaining: 74,

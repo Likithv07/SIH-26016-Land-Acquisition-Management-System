@@ -28,7 +28,7 @@ interface ChatMessage {
   timestamp: string;
   quickAction?: {
     label: string;
-    view: 'dashboard' | 'citizen_compensation' | 'consent' | 'grievance' | 'documents';
+    view: 'dashboard' | 'citizen_compensation' | 'citizen_land' | 'consent' | 'grievance' | 'documents';
   };
 }
 
@@ -197,7 +197,7 @@ export const CitizenAiChatbot: React.FC<CitizenAiChatbotProps> = ({ isOpen, onCl
                 village: citizenParcel.village,
                 district: citizenParcel.district,
                 totalCompensation: citizenParcel.totalCompensation,
-                consentStatus: citizenParcel.consentStatus,
+                consentStatus: citizenParcel.consentReceived ? 'Consent Given' : 'Pending',
               }
             : undefined,
         }),

@@ -75,7 +75,7 @@ export const CitizenLandDemarcation: React.FC = () => {
       parcelId: parcel.id,
       citizenName: parcel.landownerName,
       mobile: parcel.landownerMobile || '9876543210',
-      category: 'Demarcation Issue',
+      category: 'Land Area Dispute',
       subject: `Boundary Re-Verification: Sy ${parcel.surveyNumber}`,
       description: reSurveyReason,
     });

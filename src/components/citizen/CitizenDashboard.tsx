@@ -420,7 +420,7 @@ Certified by: Competent Authority for Land Acquisition (CALA)
                 Survey No: {citizenParcel.surveyNumber}
               </h2>
             </div>
-            <StatusBadge status={citizenParcel.status} />
+            <StatusBadge status={citizenParcel.status ?? citizenParcel.acquisitionStatus} />
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">

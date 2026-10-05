@@ -205,10 +205,10 @@ export const GrievancePortal: React.FC = () => {
 
                 <p className="text-slate-600 leading-relaxed">{grv.description}</p>
 
-                {grv.resolutionNotes && (
+                {grv.resolutionNote && (
                   <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11.5px]">
                     <span className="font-bold block text-emerald-950">Official Hearing Finding:</span>
-                    {grv.resolutionNotes}
+                    {grv.resolutionNote}
                   </div>
                 )}
 

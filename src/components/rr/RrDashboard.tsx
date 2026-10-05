@@ -68,7 +68,7 @@ export const RrDashboard: React.FC = () => {
         f.familyId === family.familyId
           ? {
               ...f,
-              subsistenceAllowancePaid: f.subsistenceAllowancePaid + 60000,
+              subsistenceAllowancePaid: (f.subsistenceAllowancePaid ?? 0) + 60000,
               rehabilitationStatus: f.rehabilitationStatus === 'Identified' ? 'Subsistence Disbursed' : f.rehabilitationStatus,
             }
           : f
@@ -295,7 +295,7 @@ export const RrDashboard: React.FC = () => {
                     {fam.skillTrainingEnrolledTrade || 'Eligible for Enrolment'}
                   </td>
                   <td className="py-3 px-4 font-mono font-bold text-emerald-700">
-                    ₹{fam.subsistenceAllowancePaid.toLocaleString('en-IN')}
+                    ₹{(fam.subsistenceAllowancePaid ?? 0).toLocaleString('en-IN')}
                   </td>
                   <td className="py-3 px-4">
                     <span
